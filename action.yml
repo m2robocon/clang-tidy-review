@@ -17,10 +17,10 @@ inputs:
     description: 'Absolute path to initial working directory. Useful if generating `compile_commands.json` outside of the Action'
     default: ${{ github.workspace }}
     require: false
-  clang_tidy_version:
-    description: 'Version of clang-tidy to use; one of 6.0, 7, 8, 9, 10, 11, 12'
-    default: '12'
-    required: false
+  # clang_tidy_version:
+  #   description: 'Version of clang-tidy to use; one of 6.0, 7, 8, 9, 10, 11, 12'
+  #   default: '12'
+  #   required: false
   clang_tidy_checks:
     description: 'List of checks'
     default: '-*,performance-*,readability-*,bugprone-*,clang-analyzer-*,cppcoreguidelines-*,mpi-*,misc-*'
@@ -57,18 +57,29 @@ outputs:
   total_comments:
     description: 'Total number of warnings from clang-tidy'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - --clang_tidy_binary=clang-tidy-${{ inputs.clang_tidy_version }}
-    - --token=${{ inputs.token }}
-    - --repo=${{ inputs.repo }}
-    - --pr=${{ inputs.pr }}
-    - --build_dir=${{ inputs.build_dir }}
-    - --base_dir=${{ inputs.base_dir }}
-    - --clang_tidy_checks=${{ inputs.clang_tidy_checks }}
-    - --config_file=${{ inputs.config_file }}
-    - --include='${{ inputs.include }}'
-    - --exclude='${{ inputs.exclude }}'
-    - --apt-packages=${{ inputs.apt_packages }}
-    - --cmake-command='${{ inputs.cmake_command }}'
+  using: 'composite'
+  steps:
+    - name: Update APT package indexes
+      run: "apt-get update -y"
+      shell: bash
+    - name: Install APT dependencies
+      run: "apt-get install -y git python3-pip clang-tidy ${{ inputs.apt_packages }}"
+      shell: bash
+    - name: Install PIP dependencies
+      run: "pip3 install -r requirements.txt"
+      shell: bash
+    - name: Run review
+      run: |
+        python3 ./review.py \
+        --clang_tidy_binary=clang-tidy-${{ inputs.clang_tidy_version }} \
+        --token=${{ inputs.token }} \
+        --repo=${{ inputs.repo }} \
+        --pr=${{ inputs.pr }} \
+        --build_dir=${{ inputs.build_dir }} \
+        --base_dir=${{ inputs.base_dir }} \
+        --clang_tidy_checks=${{ inputs.clang_tidy_checks }} \
+        --config_file=${{ inputs.config_file }} \
+        --include='${{ inputs.include }}' \
+        --exclude='${{ inputs.exclude }}' \
+        --cmake-command='${{ inputs.cmake_command }}"
+      shell: bash
