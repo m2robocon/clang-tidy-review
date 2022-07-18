@@ -70,7 +70,7 @@ runs:
       shell: bash
     - name: Run review
       run: |
-        python3 ./review.py \
+        python3 $GITHUB_ACTION_PATH/review.py \
         --clang_tidy_binary=clang-tidy-${{ inputs.clang_tidy_version }} \
         --token=${{ inputs.token }} \
         --repo=${{ inputs.repo }} \
