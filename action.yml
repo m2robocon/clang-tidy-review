@@ -17,10 +17,10 @@ inputs:
     description: 'Absolute path to initial working directory. Useful if generating `compile_commands.json` outside of the Action'
     default: ${{ github.workspace }}
     require: false
-  # clang_tidy_version:
-  #   description: 'Version of clang-tidy to use; one of 6.0, 7, 8, 9, 10, 11, 12'
-  #   default: '12'
-  #   required: false
+  clang_tidy_version:
+    description: 'Version of clang-tidy to use; one of 6.0, 7, 8, 9, 10, 11, 12'
+    default: '12'
+    required: false
   clang_tidy_checks:
     description: 'List of checks'
     default: '-*,performance-*,readability-*,bugprone-*,clang-analyzer-*,cppcoreguidelines-*,mpi-*,misc-*'
@@ -63,7 +63,7 @@ runs:
       run: "sudo apt-get update -y"
       shell: bash
     - name: Install APT dependencies
-      run: "sudo apt-get install -y git python3-pip clang-tidy ${{ inputs.apt_packages }}"
+      run: "sudo apt-get install -y git python3-pip clang-tidy-${{ inputs.clang_tidy_version }} ${{ inputs.apt_packages }}"
       shell: bash
     - name: Install PIP dependencies
       run: "pip3 install -r $GITHUB_ACTION_PATH/requirements.txt"
