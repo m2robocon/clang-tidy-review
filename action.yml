@@ -60,10 +60,10 @@ runs:
   using: 'composite'
   steps:
     - name: Update APT package indexes
-      run: "apt-get update -y"
+      run: "sudo apt-get update -y"
       shell: bash
     - name: Install APT dependencies
-      run: "apt-get install -y git python3-pip clang-tidy ${{ inputs.apt_packages }}"
+      run: "sudo apt-get install -y git python3-pip clang-tidy ${{ inputs.apt_packages }}"
       shell: bash
     - name: Install PIP dependencies
       run: "pip3 install -r requirements.txt"
