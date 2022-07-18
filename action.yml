@@ -56,6 +56,7 @@ inputs:
 outputs:
   total_comments:
     description: 'Total number of warnings from clang-tidy'
+    value: ${{ steps.review.outputs.total_comments }}
 runs:
   using: 'composite'
   steps:
@@ -69,6 +70,7 @@ runs:
       run: "pip3 install -r $GITHUB_ACTION_PATH/requirements.txt"
       shell: bash
     - name: Run review
+      id: review
       run: |
         python3 $GITHUB_ACTION_PATH/review.py \
         --clang_tidy_binary=clang-tidy-${{ inputs.clang_tidy_version }} \
