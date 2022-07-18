@@ -81,5 +81,5 @@ runs:
         --config_file=${{ inputs.config_file }} \
         --include='${{ inputs.include }}' \
         --exclude='${{ inputs.exclude }}' \
-        --cmake-command='${{ inputs.cmake_command }}"
+        --cmake-command='${{ inputs.cmake_command }}'
       shell: bash
